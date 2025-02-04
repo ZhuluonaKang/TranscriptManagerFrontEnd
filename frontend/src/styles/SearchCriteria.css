@@ -1,0 +1,99 @@
+/* Search Container */
+.search-container {
+  margin: 40px 0 10px 0;
+}
+
+/* Search Input */
+.search-container .search-input {
+  width: 70%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+}
+
+.search-container .required {
+  color: red;
+  font-size: 1.2rem;
+  margin: 0 0 0 5px;
+}
+
+/* Dropdown Container */
+.search-container .dropdown-container {
+  margin-top: 20px; 
+  position: relative;
+}
+
+/* Dropdown */
+.search-container .dropdown-select {
+  width: 70%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  max-height: 40px;
+  overflow: hidden;
+}
+
+/* Dropdown Options */
+.search-container .dropdown-select option,
+.search-container .dropdown-container select {
+  max-height: 200px !important;
+  overflow-y: auto; 
+}
+
+/* Checkbox Group */
+.search-container .checkbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Checkbox Group Title */
+.search-container .checkbox-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* Checkbox Group Layout */
+.search-container .checkbox-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px; 
+  flex-wrap: wrap; 
+}
+
+/* Checkbox Label */
+.search-container .checkbox-label {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Search Button */
+.search-container .search-btn {
+  width: auto;
+  min-width: fit-content; 
+  max-width: 180px; 
+  margin: 30px 0 0 0;
+  padding: 10px 20px; 
+  font-size: 1rem; 
+  border: none; 
+  border-radius: 4px; 
+  background-color: #2e7ed3; 
+  color: white; 
+  cursor: pointer; 
+  transition: background-color 0.2s ease; 
+}
+
+/* Hover Effect */
+.search-container .search-btn:hover {
+  background-color: #37679b; 
+  transform: scale(1.05); 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+}
