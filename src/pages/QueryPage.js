@@ -8,10 +8,13 @@ import { fetchExistingData, querySearchData } from '../api';
 import '../styles.css';
 
 const categoryList = [
-    'Accounting', 'Communication', 'Curriculum', 'eBiz', 'Economics', 'Educ Subjects',
-    'Education Leadership', 'Ethics', 'Finance', 'HR/ORG/Leader', 'International Business',
-    'IT General', 'Law', 'Management', 'Marketing', 'Operations Mgmt',
-    'Other Education Leadership', 'Project Mgmt', 'Research/Stats', 'Strategy'
+    'Accounting', 'Communication', 'Curriculum', 'Dissertation', 'eBiz', 'Economics', 
+    'Educ Subjects', 'Education Leadership', 'Entrepreneurship', 'Ethics/Soc Resp', 
+    'Finance', 'Hardware', 'HR/ORG/Leader', 'International Business', 'IT General', 
+    'Law', 'Legal', 'Management', 'Marketing', 'Networking', 'Operations Mgmt', 
+    'Other Business', 'Other Education', 'Other Education Leadership', 'Other IT', 
+    'Programming', 'Project Mgmt', 'Psychology', 'Research/Stats', 'Security', 
+    'Strategy', 'Telecomm', 'TESOL/ESL/TFL'
 ];
 
 const educationLevels = ['Bachelor', 'Master', 'Doctorate'];
