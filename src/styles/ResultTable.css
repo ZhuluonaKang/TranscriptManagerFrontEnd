@@ -1,0 +1,55 @@
+/* Container for the table */
+.result-table-container {
+  margin-top: 4cqh;
+  font-weight: bold;
+}
+
+/* Label for educator name */
+.result-table-container .educator-label {
+  font-size: 1rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 15px;
+}
+
+/* Table styles */
+.result-table-container .result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.result-table-container .result-table th, .result-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.result-table-container .result-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+/* Total valid course count */
+.result-table-container .total-course-count {
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+/* Notes section */
+.result-table-container .notes {
+  margin-top: 15px;
+  font-style: italic;
+  font-size: 1rem;
+}
+
+/* No results message */
+.result-table-container .no-results {
+  text-align: center;
+  font-size: 1em;
+  margin-top: 10px;
+  color: #888;
+}

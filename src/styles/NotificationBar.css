@@ -1,0 +1,22 @@
+/* Notification bar styles */
+.notification-bar {
+  padding: 10px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Error message styling */
+.notification-bar.error {
+  background-color: red;
+}
+
+/* Success message styling */
+.notification-bar.success {
+  background-color: green;
+}

@@ -1,21 +1,18 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import '../styles/NotificationBar.css';
 
-function NotificationBar({ message, type }) {
-    const barStyle = {
-        padding: '10px',
-        textAlign: 'center',
-        color: 'white',
-        fontWeight: 'bold',
-        backgroundColor: type === 'error' ? 'red' : 'green',
-        position: 'fixed',
-        top: 0,
-        left: 0,  /* 让通知栏从左到右占满宽度 */
-        width: '100%',  /* 确保通知栏占满整个宽度 */
-        zIndex: 1000,  /* 确保通知栏位于页面顶部 */
-    };
+const NotificationBar = ({ message, type = 'success' }) => {
+  return message ? (
+    <div className={`notification-bar ${type === 'error' ? 'error' : 'success'}`}>
+      {message}
+    </div>
+  ) : null;
+};
 
-    return message ? <div style={barStyle}>{message}</div> : null;
-}
+NotificationBar.propTypes = {
+  message: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['error', 'success']),
+};
 
 export default NotificationBar;
-
