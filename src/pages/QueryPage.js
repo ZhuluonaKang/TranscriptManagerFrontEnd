@@ -1,4 +1,4 @@
-import React, { useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import { searchData } from '../apiServices'
 import NotificationBar from '../components/NotificationBar';
 import SearchCriteria from '../components/SearchCriteria';
@@ -15,6 +15,25 @@ const QueryPage = () => {
   const [notification, setNotification] = useState('');
   const [notificationType, setNotificationType] = useState(null);
 
+  // Function to count the unique educators 
+  const countTotalEducators = () => {
+    if (!results.educator_name && results.queried_data && results.queried_data.length > 0) {
+      const educatorSet = new Set();
+
+      results.queried_data.forEach((row) => {
+        const match = row["Course Details"].match(/^(.+?): /); // Extract educator name before ":"
+        if (match) {
+          educatorSet.add(match[1].trim()); // Add unique educator names
+        }
+      });
+      return educatorSet.size;
+    }
+    return 0;
+  };
+  
+  // Calculate before rendering ResultTable
+  const totalEducators = countTotalEducators(); 
+    
   // Handles the search request
   const handleSearch = useCallback(async () => {
     if (!criteria.name.trim() && !criteria.courseCategory && criteria.educationLevel.length === 0) {
@@ -28,6 +47,7 @@ const QueryPage = () => {
       setNotification('Search completed successfully.');
       setNotificationType('success');
     } catch (error) {
+      setResults([]);
       setNotification('Error during search.');
       setNotificationType('error');
     }
@@ -41,15 +61,24 @@ const QueryPage = () => {
       return;
     }
 
-    // Extract educator's name and format a filename
-    const name = results.educator_name;
-    const fileName = `${name.replace(/\s+/g, '_')}_Qualifications_Worksheet.csv`;
+    let fileName;
+    let csvHeaders;
+
+    if (!results.educator_name) {
+      // If educator_name is empty, use totalEducators
+      fileName = "Qualifications_Worksheet.csv";
+      csvHeaders = `"Total Faculty Count","${totalEducators}"\n`;
+    } else {
+      // If educator_name exists, format filename and headers
+      const name = results.educator_name;
+      fileName = `${name.replace(/\s+/g, '_')}_Qualifications_Worksheet.csv`;
+      csvHeaders = `"Faculty's Name","${results.educator_name}"\n`;
+    }
 
     // Convert search results to CSV
-    const csvHeaders = `"Faculty's Name","${name}"\n`; 
-    const csvRows = results.queried_data.map(row => 
-      Object.values(row).map(value => `"${value}"`).join(",") // Ensure CSV-safe formatting
-    ).join("\n");
+    const csvRows = results.queried_data
+      .map(row => Object.values(row).map((value) => `"${value}"`).join(",")) // Ensure CSV-safe formatting
+      .join("\n");
 
     const csvContent = csvHeaders + csvRows;
 
@@ -90,7 +119,7 @@ const QueryPage = () => {
       {/* Display ResultTable and export button only if results exist */}
       {results.queried_data && results.queried_data.length > 0 && (
         <>
-          <ResultTable data={results} />
+          <ResultTable data={results} totalEducators={totalEducators} />
           <button className="export-btn" onClick={handleDownload}>
             Export as CSV
           </button>

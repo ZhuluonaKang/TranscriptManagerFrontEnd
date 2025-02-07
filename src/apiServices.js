@@ -54,6 +54,7 @@ export const searchData = async (criteria) => {
       course_category: criteria.courseCategory,
       education_level: criteria.educationLevel,
     });
+    console.log(response)
     return response.data;
   } catch (error) {
     console.error('Error searching data:', error);

@@ -23,7 +23,7 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: normal;
 }
 
@@ -36,14 +36,15 @@
 .result-table-container .total-course-count {
   margin-top: 20px;
   font-weight: bold;
-  font-size: 1em;
+  font-size: 0.9rem;
 }
 
 /* Notes section */
 .result-table-container .notes {
+  text-align: left;
   margin-top: 15px;
   font-style: italic;
-  font-size: 1rem;
+  font-size: 0.7rem;
 }
 
 /* No results message */

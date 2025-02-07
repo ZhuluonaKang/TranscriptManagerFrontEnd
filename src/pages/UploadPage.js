@@ -3,9 +3,9 @@ import { uploadFile } from '../apiServices';
 import '../styles/UploadPage.css';
 
 const UploadPage = () => {
-  const [uploadedFiles, setUploadedFiles] = useState([]); // State to track uploaded files
-  const [uploadStatus, setUploadStatus] = useState(''); // State to track upload status messages
-  const [progress, setProgress] = useState({}); // State to track individual file upload progress
+  const [uploadedFiles, setUploadedFiles] = useState({ valid: [], invalid: [] }); // Store valid & invalid files separately
+  const [uploadStatus, setUploadStatus] = useState(''); // Track upload status messages
+  const [progress, setProgress] = useState({}); // Track individual file upload progress
 
   // File upload restrictions
   const maxFileSize = 5 * 1024 * 1024; // 5MB limit per file
@@ -28,42 +28,43 @@ const UploadPage = () => {
 
     files.forEach((file) => {
       if (!allowedTypes.includes(file.type) || file.size > maxFileSize) {
-        invalidFiles.push(file);
+        invalidFiles.push({
+          name: file.name,
+          reason: !allowedTypes.includes(file.type)
+            ? 'Unsupported format'
+            : 'File size exceeds 5MB',
+        });
       } else {
         validFiles.push(file);
       }
     });
 
-    // Show error messages for invalid files
+    // Store valid and invalid files separately
+    setUploadedFiles({ valid: validFiles, invalid: invalidFiles });
+
+    // Display errors for invalid files
     if (invalidFiles.length > 0) {
-      const errors = invalidFiles.map((file) => {
-        if (!allowedTypes.includes(file.type)) {
-          return `${file.name} has an unsupported format.`;
-        }
-        if (file.size > maxFileSize) {
-          return `${file.name} exceeds the maximum size of 5MB.`;
-        }
-        return null;
-      });
-      setUploadStatus(`Error:\n${errors.join('\n')}`);
-      return;
+      setUploadStatus(
+        `Error:\n${invalidFiles.map((file) => `${file.name} - ${file.reason}`).join('\n')}`
+      );
     }
 
-    // Start uploading valid files
-    setUploadStatus('Uploading...');
-    setUploadedFiles(validFiles);
+    // Proceed with uploading valid files if any exist
+    if (validFiles.length > 0) {
+      setUploadStatus('Uploading...');
+      
+      // Initialize progress tracking
+      const progressMap = {};
+      validFiles.forEach((file) => (progressMap[file.name] = 0));
+      setProgress(progressMap);
 
-    // Initialize progress tracking
-    const progressMap = {};
-    validFiles.forEach((file) => (progressMap[file.name] = 0));
-    setProgress(progressMap);
+      // Upload each file sequentially
+      for (const file of validFiles) {
+        await uploadSingleFile(file);
+      }
 
-    // Upload each file sequentially
-    for (const file of validFiles) {
-      await uploadSingleFile(file);
+      setUploadStatus('All uploads completed!');
     }
-
-    setUploadStatus('All uploads completed!');
   };
 
   // Upload a single file and update progress
@@ -99,32 +100,45 @@ const UploadPage = () => {
         onChange={handleFileUpload}
       />
 
-      {uploadStatus && (
+      {/* Display errors for any invalid files */}
+      {uploadedFiles.invalid.length > 0 && (
+        <div className="error-text">
+          <p>Invalid Files:</p>
+          <ul>
+            {uploadedFiles.invalid.map((file, index) => (
+              <li key={index}>{file.name} - {file.reason}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Display upload status for any valid files */}
+      {uploadedFiles.valid.length > 0 && uploadStatus && (
         <p className={uploadStatus.startsWith('Error') ? 'error-text' : 'success-text'}>
           {uploadStatus}
         </p>
       )}
 
-      {uploadedFiles.length > 0 && (
+      {/* Progress Bar */}
+      {uploadedFiles.valid.length > 0 && (
         <div>
-          <h3>Uploading Files:</h3>
-            <ul>
-              {uploadedFiles.map((file, index) => (
-                <li key={index}>
-                  {file.name} ({(file.size / 1024).toFixed(2)} KB)
-                  <div className="progress-bar-container">
-                    <div
-                      className="progress-bar"
-                      style={{ width: `${progress[file.name] || 0}%` }}
-                    >
-                      {Math.round(progress[file.name] || 0)}%
-                    </div>
+          <ul>
+            {uploadedFiles.valid.map((file, index) => (
+              <li key={index}>
+                {file.name} ({(file.size / 1024).toFixed(2)} KB)
+                <div className="progress-bar-container">
+                  <div
+                    className="progress-bar"
+                    style={{ width: `${progress[file.name] || 0}%` }}
+                  >
+                    {Math.round(progress[file.name] || 0)}%
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
