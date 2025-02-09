@@ -2,19 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import '../styles/ResultTable.css'; 
 
-const ResultTable = ({ data }) => {
-  if (!data.queried_data || data.queried_data.length === 0) {
+const ResultTable = ({ data, totalEducators }) => {
+  const { queried_data, educator_name, notes } = data; 
+
+  if (!queried_data || queried_data.length === 0) {
     return <p className="no-results">No results to display. Make sure the correct name is entered or try searching with different criteria.</p>;
   }
 
-  // Count the total number of valid "Course Details" (excluding "N/A")
-  const totalCourseDetails = data.queried_data.reduce((count, row) => {
-    return row["Course Details"] !== "N/A" ? count + 1 : count;
-  }, 0);
+  // Function to count the total number of valid "Course Details" (excluding "N/A")
+  const totalCourseDetails = queried_data.reduce(
+    (count, row) => ( row["Course Details"] !== "N/A" ? count + 1 : count ), 
+    0
+  );
+
+  // Function to format notes into multiple lines (Splitting at numbers or manually adding breaks)
+  const formattedNotes = notes
+    .replace(/(\d+\.)/g, "\n$1")
+    .split("\n") 
+    .map((line, index) => <p key={index}>{line.trim()}</p>);
 
   return (
     <div className="result-table-container">
-      <label className="educator-label">{data.educator_name}</label>
+      <label className="educator-label">
+        {educator_name ? educator_name : `Total Unique Faculties: ${totalEducators}`}
+      </label>
+      
       <table className="result-table">
         <thead>
           <tr>
@@ -23,7 +35,7 @@ const ResultTable = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.queried_data.map((row, index) => (
+          {queried_data.map((row, index) => (
             <tr key={index}>
               <td>{row["Category"]}</td>
               <td>{row["Course Details"]}</td>
@@ -37,9 +49,9 @@ const ResultTable = ({ data }) => {
         <h3>Total Valid Courses: {totalCourseDetails}</h3>
       </div>
       
-      <p className="notes">{data.notes}</p>
+      {/* Render formatted notes */}
+      {formattedNotes && <div className="notes"><ul>{formattedNotes}</ul></div>}
     </div>
-
   );
 };
 
@@ -55,6 +67,7 @@ ResultTable.propTypes = {
     ),
     notes: PropTypes.string,
   }).isRequired,
+  totalEducators: PropTypes.number.isRequired,
 };
 
 export default ResultTable;

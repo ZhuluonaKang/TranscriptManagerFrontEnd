@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from 'prop-types';
 import { fetchCourseCategories } from '../apiServices';
 import '../styles/SearchCriteria.css';
@@ -6,17 +6,21 @@ import '../styles/SearchCriteria.css';
 function SearchCriteria({ criteria, setCriteria, handleSearch }) {
   const [courseCategories, setCourseCategories] = useState([]);
 
+  // Fetch course categories only once and memoize them
+  const memoizedCategories = useMemo(async () => {
+    try {
+      const categories = await fetchCourseCategories();
+      return categories || [];
+    } catch (error) {
+      console.error("Failed to fetch course categories:", error);
+      return [];
+    }
+  }, []); // Runs once on mount
+
+  // Store the fetched categories in state once
   useEffect(() => {
-    const getCategories = async () => {
-      try {
-        const categories = await fetchCourseCategories();
-        setCourseCategories(categories || []); // Store fetched categories in state
-      } catch (error) {
-        console.error("Failed to fetch course categories:", error);
-      }
-    };
-    getCategories(); // Fetch categories on component mount
-  }, []);
+    memoizedCategories.then(setCourseCategories);
+  }, [memoizedCategories]);
 
   const EDUCATION_LEVELS = ['Bachelor', 'Master', 'Doctorate'];
 
@@ -36,18 +40,16 @@ function SearchCriteria({ criteria, setCriteria, handleSearch }) {
 
   return (
     <div className="search-container">
-      {/* Search input */}
+      {/* Search input for educator's name*/}
       <input
         type="text"
         className="search-input"
         value={criteria.name}
         onChange={(e) => handleInputChange('name', e.target.value)}
         placeholder="Enter a Faculty's Full Name"
-        required
-      /><span className="required">*</span>
+      />
 
-
-      {/* Dropdown menu */}
+      {/* Dropdown menu for course category */}
       <div className="dropdown-container">
         <select
           className="dropdown-select"
