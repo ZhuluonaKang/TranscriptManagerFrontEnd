@@ -1,11 +1,16 @@
 import React, { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { searchData } from '../apiServices'
 import NotificationBar from '../components/NotificationBar';
 import SearchCriteria from '../components/SearchCriteria';
 import ResultTable from '../components/ResultTable';
 import '../styles/QueryPage.css';
+import '../styles/ReturnButton.css'; 
+
 
 const QueryPage = () => {
+  const navigate = useNavigate(); 
+
   const [criteria, setCriteria] = useState({ 
     name: '',
     courseCategory: '',
@@ -14,7 +19,6 @@ const QueryPage = () => {
   const [results, setResults] = useState([]); // State to store search results
   const [notification, setNotification] = useState('');
   const [notificationType, setNotificationType] = useState(null);
-
   // Function to count the unique educators 
   const countTotalEducators = () => {
     if (!results.educator_name && results.queried_data && results.queried_data.length > 0) {
@@ -101,6 +105,11 @@ const QueryPage = () => {
     setNotificationType('success');
   };
 
+   // Function to navigate back to the homepage
+   const handleGoBack = () => {
+    navigate('/'); 
+  };
+
   return (
     <div className="container">
       <h1>Query and Download Data</h1>
@@ -125,6 +134,10 @@ const QueryPage = () => {
           </button>
         </>
       )}
+       {/* Return to Homepage Button */}
+       <button className="back-btn" onClick={handleGoBack}>
+        Return to Home
+      </button>
     </div>
   );
 }

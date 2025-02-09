@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { uploadFile } from '../apiServices';
 import '../styles/UploadPage.css';
+import '../styles/ReturnButton.css';
+
 
 const UploadPage = () => {
+  const navigate = useNavigate(); 
+
   const [uploadedFiles, setUploadedFiles] = useState({ valid: [], invalid: [] }); // Store valid & invalid files separately
   const [uploadStatus, setUploadStatus] = useState(''); // Track upload status messages
   const [progress, setProgress] = useState({}); // Track individual file upload progress
@@ -86,6 +91,10 @@ const UploadPage = () => {
     }
   };
 
+  const handleGoBack = () => {
+    navigate('/'); 
+  };
+
   return (
     <div className="container">
       <h1>Upload Transcripts</h1>
@@ -139,8 +148,14 @@ const UploadPage = () => {
           </ul>
         </div>
       )}
+      {/* ⑧ Return to Home Button */}
+      <button className="back-btn" onClick={handleGoBack}>
+        Return to Home
+      </button>
     </div>
   );
 }
+
+
 
 export default UploadPage;
