@@ -1,26 +1,25 @@
 /* Export Button */
 .export-btn {
   display: inline-block; 
-  padding: 10px 20px; 
-  background-color: #2ba94a; 
-  color: white; 
-  font-size: 16px; 
-  border: none; 
-  border-radius: 5px; 
-  cursor: pointer; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-  text-align: center; 
   width: auto; 
   min-width: fit-content; 
   max-width: 180px; 
-  box-sizing: border-box; 
-  margin: 20px 0 10px 0;
+  margin: 20px 0;
+  padding: 10px 20px; 
+  font-size: 1rem; 
+  border: none; 
+  border-radius: 4px; 
+  background-color: #2e7ed3; 
+  color: white; 
+  cursor: pointer; 
+  text-align: center; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
   transition: background-color 0.2s ease; 
 }
 
 /* Hover Effect */
 .export-btn:hover {
-  background-color: #30c04f; 
+  background-color: #37679b; 
   transform: scale(1.05); 
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
 }

@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { uploadFile } from '../apiServices';
+import { uploadFiles } from '../apiServices';
+import BackToHomeButton from '../components/BackToHomeButton';
 import '../styles/UploadPage.css';
-import '../styles/ReturnButton.css';
-
 
 const UploadPage = () => {
-  const navigate = useNavigate(); 
-
-  const [uploadedFiles, setUploadedFiles] = useState({ valid: [], invalid: [] }); // Store valid & invalid files separately
+  const [toBeUploadedFiles, setToBeUploadedFiles] = useState({ valid: [], invalid: [] }); // Store valid & invalid files separately
   const [uploadStatus, setUploadStatus] = useState(''); // Track upload status messages
   const [progress, setProgress] = useState({}); // Track individual file upload progress
+  const [results, setResults] = useState({}); // Stores backend responses per file
 
   // File upload restrictions
   const maxFileSize = 5 * 1024 * 1024; // 5MB limit per file
   const maxFileCount = 100; // Maximum number of files allowed
-  const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png']; // Allowed file types
+  const allowedTypes = ['application/pdf', 'image/jpg', 'image/jpeg', 'image/png']; // Allowed file types
 
   // Handles file selection and validation
   const handleFileUpload = async (event) => {
@@ -45,7 +42,7 @@ const UploadPage = () => {
     });
 
     // Store valid and invalid files separately
-    setUploadedFiles({ valid: validFiles, invalid: invalidFiles });
+    setToBeUploadedFiles({ valid: validFiles, invalid: invalidFiles });
 
     // Display errors for invalid files
     if (invalidFiles.length > 0) {
@@ -63,36 +60,22 @@ const UploadPage = () => {
       validFiles.forEach((file) => (progressMap[file.name] = 0));
       setProgress(progressMap);
 
-      // Upload each file sequentially
-      for (const file of validFiles) {
-        await uploadSingleFile(file);
-      }
-
-      setUploadStatus('All uploads completed!');
-    }
-  };
-
-  // Upload a single file and update progress
-  const uploadSingleFile = async (file) => {
-    try {
-      await uploadFile(file, (percentCompleted) => {
+      // Upload files to the backend
+      const results = await uploadFiles(validFiles, (percentCompleted, fileName) => {
         setProgress((prevProgress) => ({
           ...prevProgress,
-          [file.name]: percentCompleted,
+          [fileName]: percentCompleted,
         }));
       });
 
-      setProgress((prevProgress) => ({
-        ...prevProgress,
-        [file.name]: 100,
-      }));
-    } catch (error) {
-      setUploadStatus(`Error uploading ${file.name}: ${error.message}`);
+      // Map backend responses to each file
+      const resultsMap = {};
+      results.forEach((result) => {
+        resultsMap[result.filename] = result;
+      });
+      setResults(resultsMap);
+      setUploadStatus('All uploads completed!');
     }
-  };
-
-  const handleGoBack = () => {
-    navigate('/'); 
   };
 
   return (
@@ -110,11 +93,11 @@ const UploadPage = () => {
       />
 
       {/* Display errors for any invalid files */}
-      {uploadedFiles.invalid.length > 0 && (
+      {toBeUploadedFiles.invalid.length > 0 && (
         <div className="error-text">
           <p>Invalid Files:</p>
           <ul>
-            {uploadedFiles.invalid.map((file, index) => (
+            {toBeUploadedFiles.invalid.map((file, index) => (
               <li key={index}>{file.name} - {file.reason}</li>
             ))}
           </ul>
@@ -122,19 +105,28 @@ const UploadPage = () => {
       )}
 
       {/* Display upload status for any valid files */}
-      {uploadedFiles.valid.length > 0 && uploadStatus && (
+      {toBeUploadedFiles.valid.length > 0 && uploadStatus && (
         <p className={uploadStatus.startsWith('Error') ? 'error-text' : 'success-text'}>
           {uploadStatus}
         </p>
       )}
 
-      {/* Progress Bar */}
-      {uploadedFiles.valid.length > 0 && (
+      
+      {toBeUploadedFiles.valid.length > 0 && (
         <div>
           <ul>
-            {uploadedFiles.valid.map((file, index) => (
+            {toBeUploadedFiles.valid.map((file, index) => (
               <li key={index}>
                 {file.name} ({(file.size / 1024).toFixed(2)} KB)
+
+                {/* Display backend response per file if available */}
+                {results[file.name] && results[file.name].status === "error" && (
+                  <p className="error-text">
+                    {results[file.name].message}
+                  </p>
+                )}
+
+                {/* Progress Bar */}
                 <div className="progress-bar-container">
                   <div
                     className="progress-bar"
@@ -148,14 +140,11 @@ const UploadPage = () => {
           </ul>
         </div>
       )}
-      {/* ⑧ Return to Home Button */}
-      <button className="back-btn" onClick={handleGoBack}>
-        Return to Home
-      </button>
+
+      {/* Return back to home page button */}
+      <BackToHomeButton />
     </div>
   );
 }
-
-
 
 export default UploadPage;

@@ -37,9 +37,9 @@ input[type="file"]:hover {
 
 /* Error Message */
 .error-text {
-  color: #E53935;
-  font-size: 1em;
-  margin-top: 15px;
+  color: #E53935 !important;
+  font-size: 1em !important;
+  margin: 10px 0 !important;
   white-space: pre-wrap; 
 }
 

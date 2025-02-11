@@ -1,31 +1,29 @@
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { searchData } from '../apiServices'
 import NotificationBar from '../components/NotificationBar';
 import SearchCriteria from '../components/SearchCriteria';
 import ResultTable from '../components/ResultTable';
+import BackToHomeButton from '../components/BackToHomeButton';
 import '../styles/QueryPage.css';
-import '../styles/ReturnButton.css'; 
-
 
 const QueryPage = () => {
-  const navigate = useNavigate(); 
-
   const [criteria, setCriteria] = useState({ 
-    name: '',
+    firstName: '',
+    lastName: '',
     courseCategory: '',
     educationLevel: [],
   }); // State for search criteria
   const [results, setResults] = useState([]); // State to store search results
   const [notification, setNotification] = useState('');
   const [notificationType, setNotificationType] = useState(null);
+
   // Function to count the unique educators 
   const countTotalEducators = () => {
     if (!results.educator_name && results.queried_data && results.queried_data.length > 0) {
       const educatorSet = new Set();
 
       results.queried_data.forEach((row) => {
-        const match = row["Course Details"].match(/^(.+?): /); // Extract educator name before ":"
+        const match = row["Course Details"].match(/- ([^-]+)$/); // Extract educator name 
         if (match) {
           educatorSet.add(match[1].trim()); // Add unique educator names
         }
@@ -40,16 +38,26 @@ const QueryPage = () => {
     
   // Handles the search request
   const handleSearch = useCallback(async () => {
-    if (!criteria.name.trim() && !criteria.courseCategory && criteria.educationLevel.length === 0) {
-      setResults([]); // Clear previous results if no criteria is entered
+    if (criteria.firstName.trim() !== "" ^ criteria.lastName.trim() !== "") {
+      setResults([]); // Clear previous results if both firstName and lastName are provided or both are empty
+      setNotification('');
+      setNotificationType(null);
       return;
     }
 
     try {
       const searchResults = await searchData(criteria); // Call API with criteria
-      setResults(searchResults); // Store the response data
-      setNotification('Search completed successfully.');
-      setNotificationType('success');
+      console.log(searchResults)
+
+      if (!searchResults.queried_data || searchResults.queried_data.length === 0) {
+        setResults([]);
+        setNotification(searchResults.message)
+        setNotificationType('error');
+      } else {
+        setResults(searchResults); // Store the response data
+        setNotification(searchResults.message);
+        setNotificationType('success');
+      }
     } catch (error) {
       setResults([]);
       setNotification('Error during search.');
@@ -105,11 +113,6 @@ const QueryPage = () => {
     setNotificationType('success');
   };
 
-   // Function to navigate back to the homepage
-   const handleGoBack = () => {
-    navigate('/'); 
-  };
-
   return (
     <div className="container">
       <h1>Query and Download Data</h1>
@@ -134,10 +137,9 @@ const QueryPage = () => {
           </button>
         </>
       )}
-       {/* Return to Homepage Button */}
-       <button className="back-btn" onClick={handleGoBack}>
-        Return to Home
-      </button>
+
+      {/* Return back to home page button */}
+      <BackToHomeButton />
     </div>
   );
 }
