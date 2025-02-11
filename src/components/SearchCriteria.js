@@ -4,6 +4,7 @@ import { fetchCourseCategories } from '../apiServices';
 import '../styles/SearchCriteria.css';
 
 function SearchCriteria({ criteria, setCriteria, handleSearch }) {
+  const [error, setError] = useState(""); // Track validation error
   const [courseCategories, setCourseCategories] = useState([]);
 
   // Fetch course categories only once and memoize them
@@ -38,17 +39,43 @@ function SearchCriteria({ criteria, setCriteria, handleSearch }) {
     setCriteria({ ...criteria, educationLevel: updatedEducationLevels });
   };
 
+  // Validates names
+  const validateNames = () => {
+    if (criteria.firstName.trim() !== "" ^ criteria.lastName.trim() !== "") {
+      setError("You need to enter both first and last name.");
+    } else {
+      setError(""); // Clear error if both fields are filled or both fields are empty
+    }
+  };
+
   return (
     <div className="search-container">
       {/* Search input for educator's name*/}
-      <input
-        type="text"
-        className="search-input"
-        value={criteria.name}
-        onChange={(e) => handleInputChange('name', e.target.value)}
-        placeholder="Enter a Faculty's Full Name"
-      />
-
+      <div className="name-container">
+        <label className="name-title">Faculty's Name:</label>
+        <div className="name-group">
+          <input
+            type="text"
+            className="name-input"
+            value={criteria.firstName}
+            onChange={(e) => handleInputChange('firstName', e.target.value)}
+            onBlur={validateNames}
+            placeholder="First Name"
+          />
+          <input
+            type="text"
+            className="name-input"
+            value={criteria.lastName}
+            onChange={(e) => handleInputChange('lastName', e.target.value)}
+            onBlur={validateNames}
+            placeholder="Last Name"
+          />
+        </div>
+        
+        {/* Display error message if needed */}
+        {error && <p className="error-message">{error}</p>}
+      </div>
+      
       {/* Dropdown menu for course category */}
       <div className="dropdown-container">
         <select
@@ -94,7 +121,8 @@ function SearchCriteria({ criteria, setCriteria, handleSearch }) {
 // Define prop types for type safety
 SearchCriteria.propTypes = {
   criteria: PropTypes.shape({
-    name: PropTypes.string,
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
     courseCategory: PropTypes.string,
     educationLevel: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,

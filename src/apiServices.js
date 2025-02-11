@@ -20,23 +20,38 @@ export const fetchCourseCategories = async () => {
  * @param {File} file - The file to be uploaded
  * @returns {Promise<Object>} - The processed file data
  */
-export const uploadFile = async (file, onProgress) => {
+export const uploadFiles = async (files, onProgress) => {
   const formData = new FormData();
-  formData.append('files', file);
+  
+  // Append multiple files (backend expects "files")
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
 
   try {
-    return axios.post(`${API_URL}/upload`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+    const response = await axios.post(`${API_URL}/upload`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
       onUploadProgress: (event) => {
         if (onProgress) {
           const percentCompleted = Math.round((event.loaded * 100) / event.total);
-          onProgress(percentCompleted);
+          
+          // Assign progress to the correct file
+          files.forEach((file) => {
+            onProgress(percentCompleted, file.name);
+          });
         }
       },
     });
+
+    // Extract structured response
+    if (response.data && response.data.processed_files) {
+      return response.data.processed_files;
+    } else {
+      throw new Error("Unexpected response format from server.");
+    }
   } catch (error) {
-    console.error('Error uploading file:', error);
-    throw error;
+    console.error("Error uploading files:", error);
+    return [{ status: "error", message: "File upload failed. Please try again." }];
   }
 };
 
@@ -50,7 +65,8 @@ export const searchData = async (criteria) => {
   try {
     console.log(criteria);
     const response = await axios.post(`${API_URL}/search`, {
-      educator_name: criteria.name,
+      educator_firstName: criteria.firstName,
+      educator_lastName: criteria.lastName,
       course_category: criteria.courseCategory,
       education_level: criteria.educationLevel,
     });

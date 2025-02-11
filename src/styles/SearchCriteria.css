@@ -3,30 +3,63 @@
   margin: 40px 0 10px 0;
 }
 
-/* Search Input */
-.search-container .search-input {
-  width: 70%;
+/* Name Group & Checkbox Group */
+.search-container .name-container,
+.search-container .checkbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Name Group Title  & Checkbox Group Title */
+.search-container .name-title,
+.search-container .checkbox-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* Name Group Layout & Checkbox Group Layout */
+.search-container .name-group,
+.search-container .checkbox-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px; 
+  flex-wrap: wrap; 
+}
+
+/* Name Input */
+.search-container .name-input {
   padding: 10px;
   font-size: 1rem;
   border: 2px solid #ddd;
   border-radius: 5px;
 }
 
-.search-container .required {
+.search-container .error-message {
   color: red;
-  font-size: 1.2rem;
-  margin: 0 0 0 5px;
+  font-size: 0.9rem;
+  margin: 8px 0 0 0;
+}
+
+/* Checkbox Label */
+.search-container .checkbox-label {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 /* Dropdown Container */
 .search-container .dropdown-container {
-  margin-top: 20px; 
+  margin: 25px 0; 
   position: relative;
 }
 
 /* Dropdown */
 .search-container .dropdown-select {
-  width: 70%;
+  width: 80%;
   padding: 10px;
   font-size: 1rem;
   border: 2px solid #ddd;
@@ -44,43 +77,13 @@
   overflow-y: auto; 
 }
 
-/* Checkbox Group */
-.search-container .checkbox-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-}
-
-/* Checkbox Group Title */
-.search-container .checkbox-title {
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-/* Checkbox Group Layout */
-.search-container .checkbox-group {
-  display: flex;
-  justify-content: center;
-  gap: 20px; 
-  flex-wrap: wrap; 
-}
-
-/* Checkbox Label */
-.search-container .checkbox-label {
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
 /* Search Button */
 .search-container .search-btn {
+  display: inline-block; 
   width: auto;
   min-width: fit-content; 
   max-width: 180px; 
-  margin: 30px 0 0 0;
+  margin: 30px 0 20px 0;
   padding: 10px 20px; 
   font-size: 1rem; 
   border: none; 
@@ -88,6 +91,8 @@
   background-color: #2e7ed3; 
   color: white; 
   cursor: pointer; 
+  text-align: center; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
   transition: background-color 0.2s ease; 
 }
 
